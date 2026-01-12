@@ -1,0 +1,17 @@
+.wrangler
+env.local
+node_modules
+dist
+*.log
+node_modules/
+.wrangler/
+dist/
+.DS_Store
+*.log
+.env
+.env.local
+
+
+
+
+

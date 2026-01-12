@@ -1,0 +1,11 @@
+name = "gemini-proxy-cloudflare"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+[env.production]
+vars = { }
+
+# Set GEMINI_PROXY_KEY as a secret in the Cloudflare Dashboard
+# or via CLI: wrangler secret put GEMINI_PROXY_KEY
+
+
