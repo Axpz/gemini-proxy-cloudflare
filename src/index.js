@@ -1,30 +1,24 @@
 export default {
-  async fetch(request, env, ctx) {
-    if (request.method !== "POST" && request.method !== "GET") {
-      return new Response("Method Not Allowed", { status: 405 });
-    }
+  async fetch(request, env) {
 
     const auth = request.headers.get("Authorization");
-    if (!auth || auth !== `Bearer ${env.GEMINI_PROXY_KEY}`) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (auth !== `Bearer ${env.GEMINI_PROXY_KEY}`) {
+      return new Response("Unauthorized", { status: 401 });
     }
 
-    // Build target URL for hard constraint
     const incomingUrl = new URL(request.url);
     const targetUrl = `https://generativelanguage.googleapis.com${incomingUrl.pathname}${incomingUrl.search}`;
 
-    const newHeaders = new Headers(request.headers);
-    newHeaders.delete("Host"); // let fetch set the correct host
-    newHeaders.delete("Authorization"); // never forward your proxy token
+    const headers = new Headers(request.headers);
+    headers.delete("Host");
+    headers.delete("Authorization");
 
+    // HTTP + WS proxy
     const proxyRequest = new Request(targetUrl, {
       method: request.method,
-      headers: newHeaders,
-      body: request.method === "POST" ? request.body : null,
-      redirect: 'follow',
+      headers,
+      body: request.body,
+      redirect: "follow",
     });
 
     try {
